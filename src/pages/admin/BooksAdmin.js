@@ -4,6 +4,7 @@ import { FaRegFilePdf } from "react-icons/fa";
 import { BiSearch } from "react-icons/bi";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { ClipLoader } from "react-spinners";
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 
@@ -12,6 +13,7 @@ const BooksAdmin = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [showModalIssue, setShowModalIssue] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   // Category data
   const categories = [
@@ -133,6 +135,9 @@ const BooksAdmin = () => {
         return;
       }
 
+      // Set loading to true to display the loader
+      setLoading(true);
+
       const { error } = await supabase
         .from('borrowbooks')
         .insert([
@@ -177,6 +182,9 @@ const BooksAdmin = () => {
         autoClose: 2000,
         hideProgressBar: true
       });
+    } finally {
+      // Set loading to false after submission process ends
+      setLoading(false);
     }
   };
 
@@ -573,6 +581,9 @@ const BooksAdmin = () => {
                 <button
                   type="submit"
                   className="bg-blue text-white font-semibold py-2 px-4  rounded-md shadow-sm mt-2">
+                  {loading && ( 
+                    <ClipLoader color="#ffffff" loading={loading} size={20} className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" />
+                  )}
                   Submit
                 </button>
               </div>

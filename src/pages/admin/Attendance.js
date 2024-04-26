@@ -3,6 +3,7 @@ import { FaRegFilePdf } from "react-icons/fa";
 import { supabase } from '../../utils/supabaseClient';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { ClipLoader } from "react-spinners";
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 
@@ -18,6 +19,7 @@ const Attendance = () => {
   const [studentNumber, setStudentNumber] = useState('');
   const [name, setName] = useState('');
   const [course, setCourse] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   // Pang fetch ng table
   const [attendanceData, setAttendanceData] = useState([]);
@@ -74,6 +76,7 @@ const Attendance = () => {
   // Pang add sa attendance database
   async function handleSignIn(event) {
     event.preventDefault();
+    setIsLoading(true);
 
     try {
       // Pang format ng time 
@@ -87,6 +90,7 @@ const Attendance = () => {
           autoClose: 2000,
           hideProgressBar: true
         });
+        setIsLoading(false);
         return;
       }
 
@@ -110,6 +114,7 @@ const Attendance = () => {
       setCourse('');
 
       setShowModal(false);
+      setIsLoading(false);
       fetchAttendanceData();
 
       toast.success("Sign in successfully", {
@@ -344,7 +349,11 @@ const Attendance = () => {
 
               <div className="flex justify-center pt-4">
                 <button type='submit' className="bg-blue text-white py-2 px-4 rounded-lg mr-2">
-                  Sign in
+                {isLoading ? (
+                  <ClipLoader color="white" size={20} />
+                ) : (
+                  'Sign in'
+                )}
                 </button>
               </div>
             </form>
