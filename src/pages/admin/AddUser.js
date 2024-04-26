@@ -25,8 +25,6 @@ const UserListAdmin = () => {
   const [user, setUser] = useState({
   });
 
-  // Loading state for user creation
-  const [loading, setLoading] = useState(false);
 
   // Pang realtime fetch
   useEffect(() => {
@@ -37,11 +35,15 @@ const UserListAdmin = () => {
     return () => clearInterval(interval);
   }, []);
 
+  
+
+
   // Fetch users para sa table
   async function fetchUsers() {
     const { data } = await supabase.from('users').select('*');
     setUsers(data);
   }
+
 
   // Pang handle ng mga input sa form
   function handleChange(event) {
@@ -51,11 +53,11 @@ const UserListAdmin = () => {
     }));
   }
 
+    
   // Add user to database
   async function addUser() {
     try {
-      setLoading(true); 
-
+      
       const formattedDate = new Date().toISOString().split('T')[0];
 
       await supabase
@@ -81,6 +83,7 @@ const UserListAdmin = () => {
         hideProgressBar: true
       });
 
+
       // Pang empty ng form 
       setUser({
         studentNumber: '',
@@ -97,10 +100,9 @@ const UserListAdmin = () => {
         autoClose: 2000,
         hideProgressBar: true
       });
-    } finally {
-      setLoading(false);
     }
   }
+
 
   // Search bar and category
   const [searchQuery, setSearchQuery] = useState("");
@@ -117,6 +119,7 @@ const UserListAdmin = () => {
       user.email.toLowerCase().includes(searchQuery.toLowerCase())
       : false
   );
+
 
   const handleExport = () => {
     const doc = new jsPDF();
@@ -158,7 +161,7 @@ const UserListAdmin = () => {
     });
 
     doc.save("Users list.pdf");
-  };
+};
 
   return (
     <div className='px-5 flex-1'>
@@ -340,10 +343,8 @@ const UserListAdmin = () => {
               <div className="flex justify-center pt-4">
                 <button
                   type="submit"
-                  className="bg-blue text-white py-2 px-4 rounded-lg mr-2 hover:bg-blue"
-                  disabled={loading} // Disable the button when loading is true
-                >
-                  {loading ? <div className="loader"></div> : "Create account"} {/* Show loader if loading is true */}
+                  className="bg-blue text-white py-2 px-4 rounded-lg mr-2 hover:bg-blue">
+                  Create account
                 </button>
               </div>
             </form>
