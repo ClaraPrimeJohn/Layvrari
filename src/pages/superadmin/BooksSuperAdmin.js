@@ -8,6 +8,7 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
+import { ClipLoader, BarLoader } from 'react-spinners';
 
 
 const BookSuperAdmin = () => {
@@ -16,6 +17,9 @@ const BookSuperAdmin = () => {
   const [showModal, setShowModal] = useState(false);
   const [showModalUpdate, setShowModalUpdate] = useState(false);
   const [showModalIssue, setShowModalIssue] = useState(false);
+
+  const [addLoading, setAddLoading] = useState(false);
+  const [returnLoading, setReturnLoading] = useState({});
 
   const handleOpenModal = () => {
     setShowModal(true);
@@ -72,11 +76,6 @@ const BookSuperAdmin = () => {
   useEffect(() => {
     fetchBooks();
     fetchBookIssued();
-    const interval = setInterval(() => {
-      fetchBooks();
-      fetchBookIssued();
-    }, 3000);
-    return () => clearInterval(interval);
   }, []);
 
 
@@ -127,6 +126,8 @@ const BookSuperAdmin = () => {
 
   // Add book
   async function addBook() {
+    setAddLoading(true)
+
     try {
 
       const currentTime = new Date();
@@ -161,15 +162,18 @@ const BookSuperAdmin = () => {
       });
 
       toast.success("Book added successfully", {
-        autoClose: 2000,
+        autoClose: 1000,
         hideProgressBar: true
       });
 
+      setAddLoading(false)
+
     } catch (error) {
       toast.error("Error adding book. Please try again.", {
-        autoClose: 2000,
+        autoClose: 1000,
         hideProgressBar: true
       });
+      setAddLoading(false)
     }
   }
 
@@ -207,13 +211,13 @@ const BookSuperAdmin = () => {
       fetchBooks();
 
       toast.success("Book updated successfully", {
-        autoClose: 2000,
+        autoClose: 1000,
         hideProgressBar: true
       });
 
     } catch (error) {
       toast.error("Error updating book. Please try again.", {
-        autoClose: 2000,
+        autoClose: 1000,
         hideProgressBar: true
       });
     }
@@ -231,13 +235,13 @@ const BookSuperAdmin = () => {
       fetchBooks();
 
       toast.success("Book deleted successfully", {
-        autoClose: 2000,
+        autoClose: 1000,
         hideProgressBar: true
       });
 
     } catch (error) {
       toast.error("Error deleting book. Please try again.", {
-        autoClose: 2000,
+        autoClose: 1000,
         hideProgressBar: true
       });
     }
@@ -282,7 +286,7 @@ const BookSuperAdmin = () => {
     try {
       if (!fullName) {
         toast.warn('Invalid student number or no account found.', {
-          autoClose: 2000,
+          autoClose: 1000,
           hideProgressBar: true
         });
         return;
@@ -315,7 +319,7 @@ const BookSuperAdmin = () => {
       }
 
       toast.success("Issued successfully", {
-        autoClose: 2000,
+        autoClose: 1000,
         hideProgressBar: true
       });
 
@@ -328,13 +332,15 @@ const BookSuperAdmin = () => {
     } catch (error) {
       console.error('Error issuing book:', error.message);
       toast.error("Failed to issue book.", {
-        autoClose: 2000,
+        autoClose: 1000,
         hideProgressBar: true
       });
     }
   };
 
   const markAsReturned = async (ddcId, transactionId) => {
+    setReturnLoading((prev) => ({ ...prev, [transactionId]: true }));
+
     try {
       const { updateError } = await supabase
         .from('books')
@@ -355,18 +361,22 @@ const BookSuperAdmin = () => {
       }
 
       toast.success("Book marked as returned", {
-        autoClose: 2000,
+        autoClose: 1000,
         hideProgressBar: true
       });
 
       fetchBookIssued();
       fetchBooks();
+
+      setReturnLoading((prev) => ({ ...prev, [transactionId]: false }));
+
     } catch (error) {
       console.error('Error marking book as returned:', error.message);
       toast.error("Failed to mark book as returned.", {
-        autoClose: 2000,
+        autoClose: 1000,
         hideProgressBar: true
       });
+      setReturnLoading((prev) => ({ ...prev, [transactionId]: false }));
     }
   };
 
@@ -381,13 +391,13 @@ const BookSuperAdmin = () => {
       fetchBookIssued();
 
       toast.success("Transaction deleted successfully", {
-        autoClose: 2000,
+        autoClose: 1000,
         hideProgressBar: true
       });
 
     } catch (error) {
       toast.error("Error deleting transaction. Please try again.", {
-        autoClose: 2000,
+        autoClose: 1000,
         hideProgressBar: true
       });
     }
@@ -648,7 +658,7 @@ const BookSuperAdmin = () => {
                           <button
                             className="text-sm text-blue font-normal py-2 my-2 rounded-lg hover:text-black mr-5"
                             onClick={() => markAsReturned(issue.ddc_no, issue.transaction_id)}>
-                            Mark as Returned
+                            {returnLoading[issue.transaction_id] ? (<BarLoader size={5} color="#202020" />) : ("Mark as Returned")}
                           </button>
                         )}
                         <button className="bg-red ml-5 text-white px-3 py-1 rounded-md"
@@ -678,7 +688,7 @@ const BookSuperAdmin = () => {
                           <button
                             className="text-sm text-blue font-normal py-2 my-2 rounded-lg hover:text-black delete-margin"
                             onClick={() => markAsReturned(issue.ddc_no, issue.transaction_id)}>
-                            Mark as Returned
+                            {returnLoading[issue.transaction_id] ? (<BarLoader size={5} color="#202020" />) : ("Mark as Returned")}
                           </button>
                         )}
                         <button className="bg-red ml-6 text-white px-3 py-1 rounded-md"
@@ -770,7 +780,7 @@ const BookSuperAdmin = () => {
 
               <div className="flex justify-center pt-4">
                 <button type="submit" className="bg-blue text-white py-2 px-4 rounded-lg mr-2" >
-                  Add Book
+                  {addLoading ? <ClipLoader size={20} color="white" /> : "Add Book"}
                 </button>
               </div>
             </form>
