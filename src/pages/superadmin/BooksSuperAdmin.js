@@ -21,6 +21,7 @@ const BookSuperAdmin = () => {
   const [loading, setLoading] = useState(true);
   const [addLoading, setAddLoading] = useState(false);
   const [updateLoading, setUpdateLoading] = useState(false);
+  const [issueLoading, setIssueLoading] = useState(false);
   const [returnLoading, setReturnLoading] = useState({});
 
   const handleOpenModal = () => {
@@ -292,6 +293,7 @@ const BookSuperAdmin = () => {
 
   const issueBook = async (e) => {
     e.preventDefault();
+    setIssueLoading(true);
     try {
       if (!fullName) {
         toast.warn('Invalid student number or no account found.', {
@@ -338,12 +340,15 @@ const BookSuperAdmin = () => {
       fetchBooks();
       fetchBookIssued();
 
+      setIssueLoading(false);
+
     } catch (error) {
       console.error('Error issuing book:', error.message);
       toast.error("Failed to issue book.", {
         autoClose: 1000,
         hideProgressBar: true
       });
+      setIssueLoading(false);
     }
   };
 
@@ -979,10 +984,10 @@ const BookSuperAdmin = () => {
                   </div>
 
                   <div className="flex justify-center pt-4">
-                    <button
+                  <button
                       type="submit"
-                      className="bg-blue text-white font-semibold py-2 px-4 rounded-md shadow-sm mt-2">
-                      Submit
+                      className="bg-blue text-white font-semibold py-2 px-4  rounded-md shadow-sm mt-2">
+                      {issueLoading ? <ClipLoader size={20} color="white" /> : "Submit"}
                     </button>
                   </div>
                 </form>
