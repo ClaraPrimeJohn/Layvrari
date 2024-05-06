@@ -93,22 +93,6 @@ const ManualAdmin = () => {
                 You can generate a PDF of the records by clicking <span className='font-semibold'>"Export as PDF."</span> Use the calendar filter to specify the desired record range.
               </p>
             </div>
-
-            {/* Guide for Managing Student Records */}
-            <div>
-              <h3 className="text-lg font-semibold mb-4 text-center text-blue">Managing Student Records</h3>
-              <ul class="list-disc ml-4 mb-4">
-                <li className="ml-4">Navigate to the <span className='font-semibold'>"Students"</span> tab on the sidebar.</li>
-                <li className="ml-4">To add a new student, click <span className='font-semibold'>"Add Student"</span> and fill in the necessary information.</li>
-                <li className="ml-4">To update a student record, find the student in the list and click <span className='font-semibold'>"Edit"</span>.</li>
-                <li className="ml-4">To delete a student record, find the entry and click <span className='font-semibold'>"Delete"</span>. Confirm the action if prompted.</li>
-              </ul>
-
-              <h4 className="text-base font-semibold my-2">Additional Note:</h4>
-              <p>
-                You can generate a PDF of student records by clicking <span className='font-semibold'>"Export as PDF"</span> and using the calendar filter to specify the desired record range.
-              </p>
-            </div>
           </div>
         </div>
       )}
